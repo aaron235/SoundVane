@@ -45,7 +45,7 @@ app.get( "/url/*", ( req, res ) ->
 	soundcloud.getIdRecsList( soundcloudUrl ).then(
 		( results ) ->
 			console.log( results )
-			page.tracks.ids = results
+			page.tracks = sortByIncidence( results )
 
 			if ( link.host != "soundcloud.com" )
 				page.title = "Whoops."
@@ -55,9 +55,46 @@ app.get( "/url/*", ( req, res ) ->
 			res.render( 'recommendations' , page ) )
 	)
 
+sortByIncidence = ( array ) ->
+	frequency = {}
+	value = 0
+	for i in [1..array.length]
+		value = array[i]
+		if value in frequency
+			frequency[value]++
+		else
+			frequency[value] = 1
 
+	unique = []
+	for value in frequency
+		unique.push( value )
 
+	compareTo = (a, b) ->
+		return frequency[b] - frequency[a]
 
+	return unique.sort(compareTo)
+
+###
+var frequency = {}, value;
+for(var i = 0; i < array.length; i++) {
+    value = array[i];
+    if(value in frequency) {
+        frequency[value]++;
+    }
+    else {
+        frequency[value] = 1;
+    }
+}
+
+var unique = [];
+for(value in frequency) {
+    unique.push(value);
+}
+
+function compareTo(a, b) {
+    return frequency[b] - frequency[a];
+}
+###
 # About sends you to the about view.
 app.get( "/about", ( req, res ) ->
 
