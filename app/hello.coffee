@@ -38,22 +38,25 @@ app.get( "/", ( req, res ) ->
 app.get( "/url/*", ( req, res ) ->
 
 	link = url.parse( req.originalUrl )
-
 	soundcloudUrl = link.pathname.substr(5)
 
 	page = {}
-
+	console.log( "stopit")
 	soundcloud.getIdRecsList( soundcloudUrl ).then(
 		( results ) ->
-			page.tracks = results
+			console.log( results )
+			page.tracks.ids = results
+
+			if ( link.host != "soundcloud.com" )
+				page.title = "Whoops."
+			else
+				page.title = "Recommendations"
+			console.log( page )
+			res.render( 'recommendations' , page ) )
 	)
 
-	if ( link.host != "soundcloud.com" )
-		page.title = "Whoops."
-	else
-		page.title = "Recommendations"
 
-	res.render( 'recommendations' , page ) )
+
 
 # About sends you to the about view.
 app.get( "/about", ( req, res ) ->

@@ -39,15 +39,18 @@ app.get("/url/*", function(req, res) {
   link = url.parse(req.originalUrl);
   soundcloudUrl = link.pathname.substr(5);
   page = {};
-  soundcloud.getIdRecsList(soundcloudUrl).then(function(results) {
-    return page.tracks = results;
+  console.log("stopit");
+  return soundcloud.getIdRecsList(soundcloudUrl).then(function(results) {
+    console.log(results);
+    page.tracks.ids = results;
+    if (link.host !== "soundcloud.com") {
+      page.title = "Whoops.";
+    } else {
+      page.title = "Recommendations";
+    }
+    console.log(page);
+    return res.render('recommendations', page);
   });
-  if (link.host !== "soundcloud.com") {
-    page.title = "Whoops.";
-  } else {
-    page.title = "Recommendations";
-  }
-  return res.render('recommendations', page);
 });
 
 app.get("/about", function(req, res) {
