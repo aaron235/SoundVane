@@ -3,7 +3,8 @@ $fgcolor: #ff7800    //Color for clickable elements
 $bgcolor: #fff       //Main page background
 $textcolor: #000     //For text
 $linktextcolor: #3c3c3c
-$inputcolor: #e6e6e6 //For backgrounds of inputs
+$inputcolor: #f3f3f3 //For backgrounds of inputs
+$inputfocuscolor: #e6e6e6
 // Fonts
 $fonts: "Proxima Nova", "Verdana", sans-serif
 
@@ -35,7 +36,7 @@ a
 	max-width: 1024px
 	margin: auto
 
-input #url
+input#url
 	font-size: 1.5em
 	background: $inputcolor
 	border: 0
@@ -45,6 +46,10 @@ input #url
 	width: 50%
 	margin: 0 2em
 	text-align: center
+	border: 4px transparent solid
+
+input#url:focus
+	border: 4px $inputfocuscolor solid 
 
 // Recommendation page formatting
 
