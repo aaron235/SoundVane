@@ -23,20 +23,33 @@ app.use( express.static( 'static' ) );
 
 # For requests to the root, render home
 app.get( "/", ( req, res ) ->
-	res.render( 'home', {title: "TESTAN"} ) )
+	page = {}
+
+	page.title = "Soundvane."
+
+	res.render( 'home', page ) )
 
 # And for requests to url/track, do this:
 app.get( "/url/.+", ( req, res ) ->
 	link = url.parse( req.originalUrl )
 
+	page = {}
+
 	if ( link.host() != "soundcloud.com" )
-		res.render( 'error', { title: "Whoops." } )
-	
-	res.render( 'recommendations' , { title: "Recommendations:" } ) )
+		page.title = "Whoops."
+	else
+		page.title = "Recommendations."
+
+	res.render( 'recommendations' , page ) )
 
 # About sends you to the about view.
 app.get( "/about", ( req, res ) ->
-	res.render( 'about' , { title: "About Us!" } ) )
+
+	page = {}
+
+	page.title = "About Us."
+
+	res.render( 'about' , page ) )
 
 # REV THIS BITCH UP
 server = app.listen( 9001, ->
