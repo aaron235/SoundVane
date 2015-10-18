@@ -1,4 +1,5 @@
 https = require( 'https' )
+url = require( 'url' )
 
 clientID = ""
 
@@ -23,11 +24,18 @@ module.exports = {
 			console.log("Got an error: ", e)
 		)
 
-	getTracksId: ( trackID ) ->
-		response = jetJSON(trackID)
-		trackArray = []
-		for track in resp.collection
-			trackArray.push( track )
-		return trackArray
+	getTracksId: ( trackUrl ) ->
+
+		console.log( "https://api.soundcloud.com/resolve.json?client_id=" + clientID +
+		             "&url=" + encodeURIComponent( trackUrl ) )
+		# request looks liek this:
+		# https://api.soundcloud.com/resolve.json?url=https%3A%2F%2Fsoundcloud.com%2Fmsmrsounds%2Fms-mr-hurricane-chvrches-remix&client_id=[your_client_id]
+		https.get( "https://api.soundcloud.com/resolve.json?client_id=" + clientID + "&url=" + encodeURIComponent( trackUrl ), ( res ) ->
+			res.on( 'data', ( body ) ->
+				https.get( JSON.parse( body.toString() ).location, ( res ) ->
+					res.on( 'data', ( trackInfo ) ->
+						return JSON.parse( trackInfo ).id ) ) ) )
+
+
 
 }
