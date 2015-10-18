@@ -35,17 +35,18 @@ app.get( "/", ( req, res ) ->
 	res.render( 'home', page ) )
 
 # And for requests to url/track, do this:
-app.get( "/url/.+", ( req, res ) ->
+app.get( "/url/*", ( req, res ) ->
+
 	link = url.parse( req.originalUrl )
 
 	page = {}
 
-	if ( link.host() != "soundcloud.com" )
+	if ( link.host != "soundcloud.com" )
 		page.title = "Whoops."
 	else
 		page.title = "Recommendations"
 
-	res.render( 'recommendations' , page ) )
+	res.render( 'recommendations' , {title: "Lol weeny"} ) )
 
 # About sends you to the about view.
 app.get( "/about", ( req, res ) ->
