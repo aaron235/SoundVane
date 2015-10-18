@@ -39,7 +39,14 @@ app.get( "/url/*", ( req, res ) ->
 
 	link = url.parse( req.originalUrl )
 
+	soundcloudUrl = link.pathname.substr(5)
+
 	page = {}
+
+	soundcloud.getIdRecsList( soundcloudUrl ).then(
+		( results ) ->
+			page.tracks = results
+	)
 
 	if ( link.host != "soundcloud.com" )
 		page.title = "Whoops."
@@ -62,4 +69,7 @@ server = app.listen( 9001, ->
 	host = server.address().address
 	port = server.address().port
 
-	console.log( "Listening at " + host + ":" + port ) )
+
+
+	#console.log( "Listening at " + host + ":" + port ) )
+	)
