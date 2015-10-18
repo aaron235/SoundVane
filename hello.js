@@ -53,6 +53,10 @@ app.get("/url/*", function(req, res) {
 	page = {};
 	//Set up the page title ("Not Found" or not) and error status based on a quick regex
 	page.title = "Recommendations";
+	//Strip mobile prefix
+	stripMobilePattern = new RegExp("(https?:\/\/)(m\.)?(soundcloud.com\/.+)");
+	soundcloudUrl = soundcloudUrl.replace(stripMobilePattern, "$1$3");
+	
 	var playlistPattern = new RegExp( "(https?:\/\/)soundcloud.com\/.+\/sets\/.+" );
 	var userPattern = new RegExp( "(https?:\/\/)soundcloud.com\/.+\/(likes)?" );
 	//If the regex fails, return early
