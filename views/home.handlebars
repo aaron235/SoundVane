@@ -3,7 +3,7 @@
 </div>
 <div class="logo-form">
     <img id="logo" src="/images/logo.png" alt="">
-    <form id="recommend-form" action="/url/" method="get">
-        <input name="url" type="text" placeholder="SoundCloud Playlist or Profile URL" autofocus>
-    </form>
+
+	<input id="url" onkeypress="if( event.keyCode == 13 ) recommendedTracks()" name="url" type="text" placeholder="SoundCloud Playlist or Profile URL" autofocus>
+
 </div>
