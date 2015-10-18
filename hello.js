@@ -7,6 +7,8 @@ express = require('express');
 
 expressHandlebars = require('express-handlebars');
 
+require('lib/soundcloud.js');
+
 app = express();
 
 app.engine('handlebars', expressHandlebars({
