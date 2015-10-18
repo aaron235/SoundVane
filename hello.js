@@ -16,6 +16,8 @@
 
   app.set('view engine', 'handlebars');
 
+  app.use(express["static"]('static'));
+
   app.get("/", function(req, res) {
     return res.render('home', {
       title: "TESTAN"

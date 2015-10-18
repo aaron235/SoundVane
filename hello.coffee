@@ -9,6 +9,9 @@ app = express()
 app.engine( 'handlebars', expressHandlebars( { defaultLayout: 'main' } ) )
 app.set( 'view engine', 'handlebars' );
 
+# Sets all folders in /static to be served from the root
+app.use( express.static( 'static' ) );
+
 app.get( "/", ( req, res ) ->
 	res.render( 'home', {title: "TESTAN"} ) )
 
