@@ -42,23 +42,26 @@ app.get("/", function(req, res) {
 //Handle requests to /url/*
 app.get("/url/*", function(req, res) {
 	var link, page, soundcloudUrl;
-	
+
 	//Parse the user's URL into a JSON URL object
 	link = url.parse(req.originalUrl);
-	
+
 	//Retrieve the SoundCloud URL by trimming of the /url/ at the start of the request
 	soundcloudUrl = link.pathname.substr(5);
-	
-	
+	//  Adds a trailing slash if there already isn't one
+	if( soundcloudUrl.slice( -1 ) != '/' ) {
+		soundcloudUrl += '/';
+	}
+
+
 	page = {};
 	//Set up the page title ("Not Found" or not) and error status based on a quick regex
 	page.title = "Recommendations";
 	//Strip mobile prefix
 	stripMobilePattern = new RegExp("(https?:\/\/)(m\.)?(soundcloud.com\/.+)");
 	soundcloudUrl = soundcloudUrl.replace(stripMobilePattern, "$1$3");
-	
 	var playlistPattern = new RegExp( "(https?:\/\/)soundcloud.com\/.+\/sets\/.+" );
-	var userPattern = new RegExp( "(https?:\/\/)soundcloud.com\/.+\/(likes)?" );
+	var userPattern = new RegExp( "(https?:\/\/)soundcloud.com\/.+?((\/?)|(\/likes\/))?" );
 	//If the regex fails, return early
 	if ( playlistPattern.test( soundcloudUrl ) ) {
 		//Render the recommendation page
@@ -80,7 +83,7 @@ app.get("/url/*", function(req, res) {
 			return res.render('recommendations', page);
 		});
 	} else if (userPattern.test( soundcloudUrl )) {
-		var userLikesPattern = new RegExp( "(https?:\/\/)soundcloud.com\/.+\/likes" );
+		var userLikesPattern = new RegExp( "(https?:\/\/)soundcloud.com\/.+\/likes\/" );
 		var userLikesUrl = soundcloudUrl;
 		if (!userLikesPattern.test(userLikesUrl)) {
 			userLikesUrl = userLikesUrl + "likes";
@@ -106,7 +109,7 @@ app.get("/url/*", function(req, res) {
 	} else {
 		page.title = "Playlist Not Found";
 		page.error = true;
-		
+
 		//Return early
 		return res.render( 'recommendations', page );
 	}
