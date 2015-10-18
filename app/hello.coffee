@@ -7,7 +7,7 @@ expressHandlebars = require( 'express-handlebars' )
 fs = require( 'fs' )
 vm = require( 'vm' )
 
-vm.runInThisContext( fs.readFileSync( __dirname + '/lib/soundcloud.js') )
+# vm.runInThisContext( fs.readFileSync( __dirname + '/lib/soundcloud.js') )
 
 app = express()
 
