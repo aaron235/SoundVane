@@ -40,7 +40,7 @@ app.get("/", function(req, res) {
 	return res.render('home', page);
 });
 
-soundcloudPattern = new RegExp( "(https?:\/\/)soundcloud.com\/.+" );
+soundcloudPattern = new RegExp( "(https?:\/\/)soundcloud.com\/.+\/sets\/.+" );
 app.get("/url/*", function(req, res) {
 	var link, page, soundcloudUrl;
 	link = url.parse(req.originalUrl);
