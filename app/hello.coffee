@@ -8,8 +8,13 @@ expressHandlebars = require( 'express-handlebars' )
 # This is for parsing Soundcloud URLs.
 url = require( 'url' )
 
+# This gets our configuration out of the file:
+fs = require( 'fs' )
+config = JSON.parse( fs.readFileSync( "./config.json" ) )
+
 # This is our application library for getting Soundcloud URLs.
 soundcloud = require( './lib/soundcloud' )
+soundcloud.setApiKey( config.clientId )
 
 # Our entire express app is stored in 'app'
 app = express()
@@ -25,7 +30,7 @@ app.use( express.static( 'static' ) );
 app.get( "/", ( req, res ) ->
 	page = {}
 
-	page.title = "Soundvane."
+	page.title = "SoundVane"
 
 	res.render( 'home', page ) )
 
@@ -38,7 +43,7 @@ app.get( "/url/.+", ( req, res ) ->
 	if ( link.host() != "soundcloud.com" )
 		page.title = "Whoops."
 	else
-		page.title = "Recommendations."
+		page.title = "Recommendations"
 
 	res.render( 'recommendations' , page ) )
 
@@ -47,7 +52,7 @@ app.get( "/about", ( req, res ) ->
 
 	page = {}
 
-	page.title = "About Us."
+	page.title = "About Us"
 
 	res.render( 'about' , page ) )
 
