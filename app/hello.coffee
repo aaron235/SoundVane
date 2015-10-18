@@ -27,8 +27,12 @@ app.get( "/", ( req, res ) ->
 
 # And for requests to url/track, do this:
 app.get( "/url/.+", ( req, res ) ->
+	link = url.parse( req.originalUrl )
 
-	res.render( 'recommendations' , {title: "Recommendations:"} ) )
+	if ( link.host() != "soundcloud.com" )
+		res.render( 'error', { title: "Whoops." } )
+	
+	res.render( 'recommendations' , { title: "Recommendations:" } ) )
 
 # About sends you to the about view.
 app.get( "/about", ( req, res ) ->
