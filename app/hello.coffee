@@ -46,7 +46,7 @@ app.get( "/url/*", ( req, res ) ->
 	else
 		page.title = "Recommendations"
 
-	res.render( 'recommendations' , {title: "Lol weeny"} ) )
+	res.render( 'recommendations' , page ) )
 
 # About sends you to the about view.
 app.get( "/about", ( req, res ) ->
