@@ -11,15 +11,14 @@ body
     padding: 0
     margin: 0
     font-family: $fonts
+    min-width: 640px
 
-nav
-    height: 1em
-    text-align: right
-    width: 100%
+
+#about
+    position: absolute
+    right: 2em
+    margin: 0em
     padding: 1em
-    padding-right: 2em
-    box-sizing: border-box
-    
 a
     color: $linktextcolor
     text-decoration: none
@@ -29,8 +28,10 @@ a
     height: 320px
     margin: 2em
     
-.logo-form
+.logo-form,
+.logo-form-small
     text-align: center
+    position: relative
 
 #recommend-form input
     font-size: 1.5em
@@ -39,3 +40,30 @@ a
     border-radius: .4em
     padding: .5em .75em
     outline: 0
+    width: 50%
+    margin: 0 2em
+
+//Recommendation page formatting
+
+.logo-form-small
+    padding: 1em 
+
+.logo-form-small #logo
+    width: 48px
+    height: 48px
+    position: absolute
+    left: 2em
+    margin: 0em
+    
+.logo-form-small #recommend-form 
+    display: inline
+    
+.track-list 
+    width: 50%
+    margin: 0 auto
+    
+.track-list ul
+    padding: 0
+.track-list li
+    list-style-type: none
+    padding: 0
