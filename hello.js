@@ -67,8 +67,6 @@ app.get("/url/*", function(req, res) {
 			//console.log(appearanceSort(results));
 			//If there were results, sort them
 			if (results.length > 0) {
-				console.log("I FOUND SOME RESULTS U GUYS");
-				console.log(results);
 				//Try to sort the results
 				page.tracks = appearanceSort(results);
 				//Limit to the maximum number of results to display
