@@ -23,4 +23,13 @@ module.exports = {
         console.log("Got an error: ", e)
     )
 
+    getTracksId: ( trackID ) ->
+      response = jetJSON(trackID)
+      trackArray = []
+      for i in resp.collection.length
+        trackArray.push(response.collection[i].user_id)
+      return trackArray
+
+
+
 }
