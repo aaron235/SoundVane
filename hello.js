@@ -52,16 +52,11 @@ app.get("/url/*", function(req, res) {
 	
 	page = {};
 	//Set up the page title ("Not Found" or not) and error status based on a quick regex
-	page.title = "Recommendations"
-	var soundcloudPattern = new RegExp( "(https?:\/\/)soundcloud.com\/.+\/sets\/.+" );
+	page.title = "Recommendations";
+	var playlistPattern = new RegExp( "(https?:\/\/)soundcloud.com\/.+\/sets\/.+" );
+	var userPattern = new RegExp( "(https?:\/\/)soundcloud.com\/.+\/(likes)?" );
 	//If the regex fails, return early
-	if ( !soundcloudPattern.test( soundcloudUrl ) ) {
-		page.title = "Playlist Not Found";
-		page.error = true;
-		
-		//Return early
-		return res.render( 'recommendations', page );
-	} else {
+	if ( playlistPattern.test( soundcloudUrl ) ) {
 		//Render the recommendation page
 		return soundcloud.getIdRecsList(soundcloudUrl).then(function(results) {
 			//console.log(appearanceSort(results));
@@ -80,6 +75,36 @@ app.get("/url/*", function(req, res) {
 			//Render the page
 			return res.render('recommendations', page);
 		});
+	} else if (userPattern.test( soundcloudUrl )) {
+		var userLikesPattern = new RegExp( "(https?:\/\/)soundcloud.com\/.+\/likes" );
+		var userLikesUrl = soundcloudUrl;
+		if (!userLikesPattern.test(userLikesUrl)) {
+			userLikesUrl = userLikesUrl + "likes";
+		}
+		//Render the recommendation page
+		return soundcloud.getIdUserRecsList(userLikesUrl).then(function(results) {
+			//console.log(appearanceSort(results));
+			//If there were results, sort them
+			if (results.length > 0) {
+				//Try to sort the results
+				page.tracks = appearanceSort(results);
+				//Limit to the maximum number of results to display
+				if (page.tracks.length > MAX_RESULT_COUNT) {
+					page.tracks = page.tracks.slice(0, MAX_RESULT_COUNT);
+				}
+			} else {
+				page.title = "User Likes Not Found";
+				page.error = true;
+			}
+			//Render the page
+			return res.render('recommendations', page);
+		});
+	} else {
+		page.title = "Playlist Not Found";
+		page.error = true;
+		
+		//Return early
+		return res.render( 'recommendations', page );
 	}
 });
 
