@@ -49,7 +49,7 @@ app.get("/url/*", function(req, res) {
 	if ( !soundcloudPattern.test( soundcloudUrl ) ) {
 		page.title = "Whoops.";
 		page.error = true;
-		res.render( 'recommendations', page );
+		return res.render( 'recommendations', page );
 	} else {
 		page.title = "Recommendations"
 	}
