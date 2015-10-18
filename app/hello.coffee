@@ -4,10 +4,7 @@ console.log( "Initializing." )
 express = require( 'express' )
 expressHandlebars = require( 'express-handlebars' )
 
-fs = require( 'fs' )
-vm = require( 'vm' )
-
-# vm.runInThisContext( fs.readFileSync( __dirname + '/lib/soundcloud.js') )
+soundcloud = require( './lib/soundcloud' )
 
 app = express()
 
