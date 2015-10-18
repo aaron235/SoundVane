@@ -29,10 +29,10 @@ a
     margin: 2em
     
 .logo-form,
-.logo-form-small
     text-align: center
     position: relative
-
+    z-index: -2 //Make sure the main body is under the nav list
+    
 #recommend-form input
     font-size: 1.5em
     background: $inputcolor
@@ -47,6 +47,8 @@ a
 
 .logo-form-small
     padding: 1em 
+    text-align: center
+    position: relative
 
 .logo-form-small #logo
     width: 48px
