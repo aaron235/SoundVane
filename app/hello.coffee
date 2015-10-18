@@ -17,8 +17,9 @@ app.use( express.static( 'static' ) );
 app.get( "/", ( req, res ) ->
 	res.render( 'home', {title: "TESTAN"} ) )
 
-app.post( "/recommend", ( req, res ) ->
-	)
+app.get( "/url/", ( req, res ) ->
+	 )
+
 
 server = app.listen( 9001, ->
 	host = server.address().address
