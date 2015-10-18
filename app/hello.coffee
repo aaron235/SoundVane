@@ -18,7 +18,7 @@ app.get( "/", ( req, res ) ->
 	res.render( 'home', {title: "TESTAN"} ) )
 
 app.get( "/url/", ( req, res ) ->
-	 )
+	res.render( 'recommendations' , {title: "Recommendations:"} ) )
 
 server = app.listen( 9001, ->
 	host = server.address().address
