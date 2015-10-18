@@ -1,3 +1,3 @@
-http = include( 'http' )
+http = require( 'http' )
 
 fetchRecs = ( url, count ) ->
