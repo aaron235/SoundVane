@@ -1,5 +1,6 @@
 <div class="header">
-	<a href="/"><img id="logo" src="/images/logo.png" alt=""></a>
+	<a href="/"><img id="logo" src="/images/logo.png" alt="">
+	</a>
 
 	<input id="url" onkeypress="if( event.keyCode == 13 ) recommendedTracks()" name="url" type="text" placeholder="SoundCloud User or Playlist URL" autofocus>
 
@@ -7,39 +8,54 @@
 </div>
 <div class="content">
 	<ul>
-			<li>
-				{{#if error}} 
-				That URL doesn't have enough tracks...
-				{{else}} 
-				We think you'll like these tracks:
-				{{/if}} 
-				<br />
-				<a href="{{url}}">(Here's the link we checked)</a><br /><br />
-		    </li>
-		
+		<li>
+			{{#if error}} That URL doesn't have enough tracks... {{else}} We think you'll like these tracks: {{/if}}
+			<br />
+			<a href="{{url}}">(Here's the link we checked)</a>
+			<br />
+			<br />
+		</li>
+		<script type="application/javascript" src="https://w.soundcloud.com/player/api.js"></script>
 		<script type="application/javascript">
 			(function () {
 				//Retrieve the list of track IDs
 				var tracks = [{{tracks}}];
+				//Retrieve the container element to store tracks in
 				var container = document.querySelector(".content ul");
-				//If there are tracks, render em
+				//If there are tracks, render em recursively
 				if (tracks.length > 0) {
 					renderTrack(0);
 				}
 
-				//Render a given track (and add an onload to render the next track)
+				//Recursively render a given track and all subsequent tracks
 				function renderTrack(i) {
+					//Create an li to hold the track iframe
 					var trackLi = document.createElement("li");
-					trackLi.innerHTML = "<iframe width='100%' height='150' scrolling='no' frameborder='no' src='https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/" + 
-						tracks[i] +  "&amp;auto_play=false&amp;hide_related=true&amp;show_comments=false&amp;show_user=true&amp;show_reposts=false&amp;visual=true'></iframe>";
+					//Append the track iframe to the li
+					trackLi.innerHTML = "<iframe width='100%' height='150' scrolling='no' frameborder='no' src='https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/" +
+						tracks[i] + "&amp;auto_play=false&amp;hide_related=true&amp;show_comments=false&amp;show_user=true&amp;show_reposts=false&amp;visual=true'></iframe>";
+					//Put the li in the container
 					container.appendChild(trackLi);
+
+					//Make a SoundCloud controller for this track's iframe
+					var trackWidget = SC.Widget(trackLi.firstChild);
+					//If there are more tracks to load
 					if (i + 1 < tracks.length) {
+						//Once this track's loaded
 						trackLi.firstChild.addEventListener("load", function () {
-							renderTrack(i + 1);
+							//Render the next track
+							var nextTrackWidget = renderTrack(i + 1);
+							//Tell the current track to play the next track after it finishes
+							trackWidget.bind(SC.Widget.Events.FINISH, function () {
+								nextTrackWidget.play();
+							});
 						});
 					}
+					//Return the controller for this track
+					return trackWidget;
 				}
-			} ());
+
+			}());
 		</script>
 
 	</ul>
