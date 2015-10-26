@@ -7,13 +7,15 @@
 </div>
 <div class="content">
 	<ul>
-		{{#if error}}
 			<li>
-				<div class="notfound">Could not find any tracks at the given URL</div>
-			</li>
-		{{else}}
-			<li>You'll like these sounds:<br /><br /></li>
-		{{/if}}
+				{{#if error}} 
+				That URL doesn't have enough tracks...
+				{{else}} 
+				We think you'll like these tracks:
+				{{/if}} 
+				<br />
+				<a href="{{url}}">(Here's the link we checked)</a><br /><br />
+		    </li>
 		
 		<script type="application/javascript">
 			(function () {

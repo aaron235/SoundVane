@@ -1,16 +1,14 @@
+"use strict";
 //The number of results to return per request
 var MAX_RESULT_COUNT = 30;
 
 //Initializing modules
-var app, config, express, expressHandlebars, fs, server, sortByIncidence, soundcloud, url,
-	indexOf = [].indexOf || function(item) {
-		for (var i = 0, l = this.length; i < l; i++) {
-			if (i in this && this[i] === item) return i;
-		}
-		return -1;
-	};
-console.log("Initializing.");
-
+var app, config, express, expressHandlebars, fs, server, sortByIncidence, soundcloud, url, indexOf = [].indexOf || function (item) {
+	for (var i = 0, l = this.length; i < l; i++) {
+		if (i in this && this[i] === item) return i;
+	}
+	return -1;
+};
 
 //Import modules
 express = require('express');
@@ -31,138 +29,117 @@ app.engine('handlebars', expressHandlebars({
 app.set('view engine', 'handlebars');
 app.use(express["static"]('static'));
 
-//Handle requests to /
-app.get("/", function(req, res) {
+/*
+Handle requests to /
+*/
+app.get("/", function (req, res) {
 	var page;
 	page = {};
 	page.title = "SoundVane";
 	return res.render('home', page);
 });
 
-//Handle requests to /url/*
-app.get("/url/*", function(req, res) {
-	var link, page, soundcloudUrl;
-
-	//Parse the user's URL into a JSON URL object
-	link = url.parse(req.originalUrl);
-
-	//Retrieve the SoundCloud URL by trimming of the /url/ at the start of the request
-	soundcloudUrl = link.pathname.substr(5);
-	//  Adds a trailing slash if there already isn't one
-	if( soundcloudUrl.slice( -1 ) != '/' ) {
-		soundcloudUrl += '/';
-	}
-
-
-	page = {};
-	//Set up the page title ("Not Found" or not) and error status based on a quick regex
-	page.title = "Recommendations";
-	//Strip mobile prefix
-	stripMobilePattern = new RegExp("(https?:\/\/)(m\.)?(soundcloud.com\/.+)");
-	soundcloudUrl = soundcloudUrl.replace(stripMobilePattern, "$1$3");
-	var playlistPattern = new RegExp( "(https?:\/\/)soundcloud.com\/.+\/sets\/.+" );
-	var userPattern = new RegExp( "(https?:\/\/)soundcloud.com\/.+?((\/?)|(\/likes\/))?" );
-	//If the regex fails, return early
-	if ( playlistPattern.test( soundcloudUrl ) ) {
-		//Render the recommendation page
-		return soundcloud.getIdRecsList(soundcloudUrl).then(function(results) {
-			//console.log(appearanceSort(results));
-			//If there were results, sort them
-			if (results.length > 0) {
-				//Try to sort the results
-				page.tracks = appearanceSort(results);
-				//Limit to the maximum number of results to display
-				if (page.tracks.length > MAX_RESULT_COUNT) {
-					page.tracks = page.tracks.slice(0, MAX_RESULT_COUNT);
-				}
-			} else {
-				page.title = "Tracks Not Found";
-				page.error = true;
-			}
-			//Render the page
-			return res.render('recommendations', page);
-		});
-	} else if (userPattern.test( soundcloudUrl )) {
-		var userLikesPattern = new RegExp( "(https?:\/\/)soundcloud.com\/.+\/likes\/" );
-		var userLikesUrl = soundcloudUrl;
-		if (!userLikesPattern.test(userLikesUrl)) {
-			userLikesUrl = userLikesUrl + "likes";
-		}
-		//Render the recommendation page
-		return soundcloud.getIdUserRecsList(userLikesUrl).then(function(results) {
-			//console.log(appearanceSort(results));
-			//If there were results, sort them
-			if (results.length > 0) {
-				//Try to sort the results
-				page.tracks = appearanceSort(results);
-				//Limit to the maximum number of results to display
-				if (page.tracks.length > MAX_RESULT_COUNT) {
-					page.tracks = page.tracks.slice(0, MAX_RESULT_COUNT);
-				}
-			} else {
-				page.title = "User Likes Not Found";
-				page.error = true;
-			}
-			//Render the page
-			return res.render('recommendations', page);
-		});
-	} else {
-		page.title = "Playlist Not Found";
-		page.error = true;
-
-		//Return early
-		return res.render( 'recommendations', page );
-	}
-});
-
-appearanceSort = function(arr) {
-
-	// creates arrays/objects
-	counts = {};
-	sorted = [];
-	final = [];
-
-	// put occurrences of numbers in an object (number; value)
-
-	for (var i in arr) {
-		counts[arr[i]] = (counts[arr[i]] || 0) + 1;
-	}
-
-	//console.log('counts: ' + JSON.stringify(counts));
-
-	// add object to array of arrays
-
-	for (var id in counts) {
-		sorted.push([id, counts[id]]);
-	}
-
-	// sort array by count of number
-
-	sorted.sort(function(a, b) {
-		return b[1] - a[1];
-	});
-
-	//console.log('sorted: ' + JSON.stringify(sorted));
-
-	for (i = 0; i < sorted.length; i++) {
-		final.push(sorted[i][0]);
-	}
-
-	//console.log('final: ' + final);
-
-	return final;
-
-};
-
-app.get("/about", function(req, res) {
+/*
+Handle requests to /about
+*/
+app.get("/about", function (req, res) {
 	var page;
 	page = {};
 	page.title = "About Us";
 	res.render('about', page);
 });
 
-server = app.listen(9001, function() {
+/*
+Handle requests to /url/*
+*/
+app.get("/url/*", function (req, res) {
+
+	// Get the URL to recommend from
+	var rawURL = url.parse(req.originalUrl).pathname.substr(5);
+	var soundCloudURL = cleanUpSoundCloudURL(rawURL);
+
+	console.log("Recommending From:", soundCloudURL);
+
+	//Get the recommendations from that URL and return a page of recommendations
+
+	return soundcloud.getRecommendations(soundCloudURL).then(function (results) {
+		//Setup the results page
+		var page = {};
+		page.url = soundCloudURL;
+		page.title = "Recommendations";
+		//Check if we actually got results
+		if (results.length > 0) {
+			//Sort the results
+			page.tracks = rankTracks(results);
+			//Limit to the maximum number of results to display
+			if (page.tracks.length > MAX_RESULT_COUNT) {
+				page.tracks = page.tracks.slice(0, MAX_RESULT_COUNT);
+			}
+		} else {
+			// If we didn't get results, change the title and show the error page
+			page.title = "Oops!";
+			page.error = true;
+		}
+
+		//Render the page
+		return res.render('recommendations', page);
+	});
+
+
+});
+
+function rankTracks(tracks) {
+	var countsByTrackID = {};
+	var tracksByTrackID = {};
+
+	//Make dictionaries of counts and track objects with trackIDs as their key
+	for (var i = 0; i < tracks.length; i++) {
+		var t = tracks[i];
+		//Add id: track as a KVP in tracksByTrackID
+		tracksByTrackID[t.id] = t;
+		//Add id: count as a KVP in counts
+		countsByTrackID[t.id] = (countsByTrackID[t.id] || 0) + 1;
+	}
+	//Array of track IDs (will be sorted and returned)
+	var trackIDs = Object.keys(countsByTrackID);
+
+	//Sort the array of track IDs
+	trackIDs.sort(function (a, b) {
+		//First by occurrence count
+		if (countsByTrackID[b] - countsByTrackID[a]) {
+			return (countsByTrackID[b] - countsByTrackID[a]);
+		} else {
+			//Then by reposts/plays
+			var trackA = tracksByTrackID[a];
+			var trackB = tracksByTrackID[b];
+			return (trackB.reposts_count / trackB.playback_count || 0) - (trackA.reposts_count / trackA.playback_count || 0);
+		}
+	});
+
+	//Return the sorted array of track IDs
+	return trackIDs;
+};
+
+function cleanUpSoundCloudURL(soundCloudURL) {
+	//Remove the URL prefix if it's present
+	var soundCloudURLPrefix = /.*soundcloud.com\//i;
+	soundCloudURL = soundCloudURL.replace(soundCloudURLPrefix, "");
+
+	//Make sure the URL has "/likes" at the end if it's not a set
+	//If the URL is a set, leave it alone
+	var soundCloudParts = soundCloudURL.split("/");
+	if (soundCloudParts.indexOf("sets") == -1) {
+		soundCloudURL = soundCloudParts[0] + "/likes";
+	}
+
+	//Re-add the URL prefix and return it
+	return "https://www.soundcloud.com/" + soundCloudURL;
+}
+
+//Listen for requests to the server
+server = app.listen(9001, function () {
 	var host, port;
 	host = server.address().address;
 	port = server.address().port;
+	console.log("Listening at port...", port);
 });
