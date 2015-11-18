@@ -27,6 +27,7 @@ app.engine('handlebars', expressHandlebars({
 	defaultLayout: 'main'
 }));
 app.set('view engine', 'handlebars');
+app.set('port', (process.env.PORT || 9001));
 app.use(express["static"]('static'));
 
 /*
@@ -137,9 +138,6 @@ function cleanUpSoundCloudURL(soundCloudURL) {
 }
 
 //Listen for requests to the server
-server = app.listen(9001, function () {
-	var host, port;
-	host = server.address().address;
-	port = server.address().port;
-	console.log("Listening at port...", port);
+server = app.listen(app.get('port'), function () {
+	console.log("Listening at port...", app.get('port'));
 });
