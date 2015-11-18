@@ -4,6 +4,7 @@
   "description": "Hello, butts!",
   "main": "hello.js",
   "scripts": {
+    "start": "node hello.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
