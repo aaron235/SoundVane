@@ -4,4 +4,4 @@
 
 #How To Use
 
-Go to http://soundvane.com and paste in a playlist or user url.
+Go to https://soundvane.herokuapp.com and paste in a playlist or user url.
